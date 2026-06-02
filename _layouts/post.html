@@ -1,0 +1,18 @@
+---
+layout: default
+---
+<article class="doc">
+  <header class="doc__head">
+    <a class="doc__back" href="{{ '/blog/' | relative_url }}">../blog</a>
+    <h1 class="doc__title">{{ page.title }}</h1>
+    <div class="meta">
+      <span class="meta__item">{{ page.date | date: "%Y-%m-%d" }}</span>
+      {% if page.tags and page.tags.size > 0 %}
+        {% for tag in page.tags %}<span class="meta__item">{{ tag }}</span>{% endfor %}
+      {% endif %}
+    </div>
+  </header>
+  <div class="prose">
+    {{ content }}
+  </div>
+</article>

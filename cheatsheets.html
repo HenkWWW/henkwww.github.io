@@ -1,0 +1,37 @@
+---
+layout: default
+title: "Cheatsheets"
+description: "Offensive security cheatsheets — quick reference for enumeration, Active Directory and post-exploitation."
+permalink: /cheatsheets/
+---
+
+<header class="page__head">
+  <h1 class="page__title">$ ls cheatsheets/</h1>
+  <p class="page__lead">
+    Quick-reference notes I actually use. Living documents — updated
+    whenever a workflow proves itself in a lab or an engagement.
+  </p>
+</header>
+
+<ul class="list">
+  {% assign items = site.cheatsheets | sort: "title" %}
+  {% for c in items %}
+  <li class="list__row">
+    <a class="list__link" href="{{ c.url | relative_url }}">
+      <div class="list__main">
+        <h2 class="list__title">{{ c.title }}</h2>
+        {% if c.summary %}<p class="list__desc">{{ c.summary }}</p>{% endif %}
+        {% if c.tags and c.tags.size > 0 %}
+        <ul class="tags">
+          {% for tag in c.tags %}<li class="tag">{{ tag }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      <div class="list__side">
+        <span class="badge">reference</span>
+        {% if c.updated %}<span class="list__date">upd {{ c.updated }}</span>{% endif %}
+      </div>
+    </a>
+  </li>
+  {% endfor %}
+</ul>

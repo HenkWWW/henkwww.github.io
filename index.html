@@ -1,0 +1,82 @@
+---
+layout: default
+title: "Home"
+description: "Offensive security writeups, Active Directory attack notes and cheatsheets by Henk Wichers, HTB CPTS."
+---
+
+<section class="hero">
+  <div class="hero__term">
+    <span class="hero__line">henk@www:~$ whoami</span>
+    <span class="hero__out">offensive security practitioner — operational sysadmin background</span>
+  </div>
+  <h1 class="hero__title">Writeups, notes &amp; cheatsheets<br>from the offensive side.</h1>
+  <p class="hero__lead">
+    {{ site.tagline }}. Active Directory attack chains, post-exploitation
+    and the defensive flip side — written by someone who has run the
+    infrastructure as well as broken it.
+    <span class="caret">&#9608;</span>
+  </p>
+  <div class="hero__links">
+    <a class="btn" href="{{ '/writeups/' | relative_url }}">Read writeups</a>
+    <a class="btn btn--ghost" href="{{ site.htb_url }}" target="_blank" rel="noopener">HTB profile</a>
+  </div>
+</section>
+
+<section class="stream">
+  <div class="stream__head">
+    <h2 class="stream__title">$ ls writeups/</h2>
+    <a class="stream__all" href="{{ '/writeups/' | relative_url }}">all &rarr;</a>
+  </div>
+  <ul class="cards">
+    {% assign recent_writeups = site.writeups | sort: "date" | reverse %}
+    {% for w in recent_writeups limit: 3 %}
+    <li class="card">
+      <a class="card__link" href="{{ w.url | relative_url }}">
+        <div class="card__meta">
+          {% if w.difficulty %}<span class="dot dot--{{ w.difficulty | downcase }}"></span>{{ w.difficulty }}{% endif %}
+          {% if w.os %}<span class="card__sep">/</span>{{ w.os }}{% endif %}
+        </div>
+        <h3 class="card__title">{{ w.title }}</h3>
+        {% if w.summary %}<p class="card__desc">{{ w.summary | truncate: 120 }}</p>{% endif %}
+        <span class="card__date">{{ w.date | date: "%Y-%m-%d" }}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="stream">
+  <div class="stream__head">
+    <h2 class="stream__title">$ ls cheatsheets/</h2>
+    <a class="stream__all" href="{{ '/cheatsheets/' | relative_url }}">all &rarr;</a>
+  </div>
+  <ul class="cards">
+    {% assign recent_sheets = site.cheatsheets | sort: "title" %}
+    {% for c in recent_sheets limit: 3 %}
+    <li class="card">
+      <a class="card__link" href="{{ c.url | relative_url }}">
+        <div class="card__meta">reference</div>
+        <h3 class="card__title">{{ c.title }}</h3>
+        {% if c.summary %}<p class="card__desc">{{ c.summary | truncate: 120 }}</p>{% endif %}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="stream">
+  <div class="stream__head">
+    <h2 class="stream__title">$ ls blog/</h2>
+    <a class="stream__all" href="{{ '/blog/' | relative_url }}">all &rarr;</a>
+  </div>
+  <ul class="postlist">
+    {% for post in site.posts limit: 4 %}
+    <li class="postlist__item">
+      <a href="{{ post.url | relative_url }}">
+        <span class="postlist__date">{{ post.date | date: "%Y-%m-%d" }}</span>
+        <span class="postlist__title">{{ post.title }}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</section>

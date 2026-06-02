@@ -1,0 +1,30 @@
+---
+layout: default
+---
+<article class="doc">
+  <header class="doc__head">
+    <a class="doc__back" href="{{ '/writeups/' | relative_url }}">../writeups</a>
+    <h1 class="doc__title">{{ page.title }}</h1>
+
+    <div class="meta">
+      {% if page.platform %}<span class="meta__item">{{ page.platform }}</span>{% endif %}
+      {% if page.os %}<span class="meta__item">os: {{ page.os }}</span>{% endif %}
+      {% if page.difficulty %}
+        <span class="meta__item meta__item--{{ page.difficulty | downcase }}">{{ page.difficulty }}</span>
+      {% endif %}
+      {% if page.date %}<span class="meta__item">{{ page.date | date: "%Y-%m-%d" }}</span>{% endif %}
+    </div>
+
+    {% if page.tags and page.tags.size > 0 %}
+    <ul class="tags">
+      {% for tag in page.tags %}<li class="tag">{{ tag }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if page.summary %}<p class="doc__summary">{{ page.summary }}</p>{% endif %}
+  </header>
+
+  <div class="prose">
+    {{ content }}
+  </div>
+</article>

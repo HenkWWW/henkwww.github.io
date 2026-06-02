@@ -1,0 +1,27 @@
+---
+layout: default
+---
+<article class="doc">
+  <header class="doc__head">
+    <a class="doc__back" href="{{ '/cheatsheets/' | relative_url }}">../cheatsheets</a>
+    <h1 class="doc__title">{{ page.title }}</h1>
+
+    <div class="meta">
+      <span class="meta__item">cheatsheet</span>
+      {% if page.updated %}<span class="meta__item">updated: {{ page.updated }}</span>
+      {% elsif page.date %}<span class="meta__item">{{ page.date | date: "%Y-%m-%d" }}</span>{% endif %}
+    </div>
+
+    {% if page.tags and page.tags.size > 0 %}
+    <ul class="tags">
+      {% for tag in page.tags %}<li class="tag">{{ tag }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if page.summary %}<p class="doc__summary">{{ page.summary }}</p>{% endif %}
+  </header>
+
+  <div class="prose">
+    {{ content }}
+  </div>
+</article>

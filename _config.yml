@@ -1,0 +1,74 @@
+# ─────────────────────────────────────────────────────────────
+#  Site identity  —  edit these
+# ─────────────────────────────────────────────────────────────
+title:       "HenkWWW"
+tagline:     "Offensive security writeups, notes & cheatsheets"
+description: >-
+  Penetration testing writeups, Active Directory attack notes and
+  cheatsheets by an operational sysadmin turned offensive security
+  practitioner. HTB CPTS certified.
+author:      "Henk Wichers"
+
+# If your repo is named  <username>.github.io  leave baseurl empty.
+# If it is a project repo (e.g. "writeups"), set baseurl: "/writeups"
+url:         "https://henkwww.github.io"
+baseurl:     ""
+
+# Profile links shown in the header / footer  —  edit these
+htb_url:      "https://profile.hackthebox.com/profile/019c7ce4-65e2-73a1-be5c-7b3028ecdd8e"
+linkedin_url: "https://www.linkedin.com/in/hendrikfrederikwichers/"
+github_url:   "https://github.com/henkwww"
+credly_url:   "https://www.credly.com/users/hendrik-frederik-wichers"
+
+# ─────────────────────────────────────────────────────────────
+#  Build settings  —  standard GitHub Pages, do not need editing
+# ─────────────────────────────────────────────────────────────
+markdown:    kramdown
+highlighter: rouge
+permalink:   /blog/:year/:month/:title/
+timezone:    Europe/Amsterdam
+
+kramdown:
+  input: GFM
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
+
+# ─────────────────────────────────────────────────────────────
+#  Collections  —  writeups and cheatsheets are their own streams
+# ─────────────────────────────────────────────────────────────
+collections:
+  writeups:
+    output: true
+    permalink: /writeups/:name/
+  cheatsheets:
+    output: true
+    permalink: /cheatsheets/:name/
+
+# Layout is assigned automatically per content type, so new files
+# only need a title + date in their front matter.
+defaults:
+  - scope: { path: "", type: "writeups" }
+    values: { layout: "writeup" }
+  - scope: { path: "", type: "cheatsheets" }
+    values: { layout: "cheatsheet" }
+  - scope: { path: "", type: "posts" }
+    values: { layout: "post" }
+  - scope: { path: "" }
+    values:
+      image: /assets/img/og-card.png
+
+# ─────────────────────────────────────────────────────────────
+#  Plugins  —  all three are whitelisted on GitHub Pages
+# ─────────────────────────────────────────────────────────────
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
+  - .obsidian

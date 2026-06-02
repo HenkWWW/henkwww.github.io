@@ -1,0 +1,31 @@
+---
+layout: default
+title: "Blog"
+description: "Notes and reflections on offensive security, certifications and the path from sysadmin to pentester."
+permalink: /blog/
+---
+
+<header class="page__head">
+  <h1 class="page__title">$ ls blog/</h1>
+  <p class="page__lead">
+    Shorter notes — reflections on certifications, methodology,
+    lab progress and the road from operational sysadmin to the
+    offensive side.
+  </p>
+</header>
+
+<ul class="list">
+  {% for post in site.posts %}
+  <li class="list__row">
+    <a class="list__link" href="{{ post.url | relative_url }}">
+      <div class="list__main">
+        <h2 class="list__title">{{ post.title }}</h2>
+        {% if post.excerpt %}<p class="list__desc">{{ post.excerpt | strip_html | truncate: 160 }}</p>{% endif %}
+      </div>
+      <div class="list__side">
+        <span class="list__date">{{ post.date | date: "%Y-%m-%d" }}</span>
+      </div>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
