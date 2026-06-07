@@ -19,6 +19,8 @@ htb_url:      "https://profile.hackthebox.com/profile/019c7ce4-65e2-73a1-be5c-7b
 linkedin_url: "https://www.linkedin.com/in/hendrikfrederikwichers/"
 github_url:   "https://github.com/henkwww"
 credly_url:   "https://www.credly.com/users/hendrik-frederik-wichers"
+credly_cpts:  "https://www.credly.com/badges/bb9933b6-56dc-4270-88aa-542f3df6da16"
+cpts_url:     "https://profile.hackthebox.com/profile/019c7ce4-65e2-73a1-be5c-7b3028ecdd8e/certificate/HTBCERT-5B7B5332A4?view=public"
 
 # ─────────────────────────────────────────────────────────────
 #  Build settings  —  standard GitHub Pages, do not need editing
