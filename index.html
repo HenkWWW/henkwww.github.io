@@ -26,6 +26,23 @@ description: "Offensive security writeups, Active Directory attack notes and che
 
 <section class="stream">
   <div class="stream__head">
+    <h2 class="stream__title">$ ls blog/</h2>
+    <a class="stream__all" href="{{ '/blog/' | relative_url }}">all &rarr;</a>
+  </div>
+  <ul class="postlist">
+    {% for post in site.posts limit: 4 %}
+    <li class="postlist__item">
+      <a href="{{ post.url | relative_url }}">
+        <span class="postlist__date">{{ post.date | date: "%Y-%m-%d" }}</span>
+        <span class="postlist__title">{{ post.title }}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="stream">
+  <div class="stream__head">
     <h2 class="stream__title">$ ls writeups/</h2>
     <a class="stream__all" href="{{ '/writeups/' | relative_url }}">all &rarr;</a>
   </div>
@@ -60,23 +77,6 @@ description: "Offensive security writeups, Active Directory attack notes and che
         <div class="card__meta">reference</div>
         <h3 class="card__title">{{ c.title }}</h3>
         {% if c.summary %}<p class="card__desc">{{ c.summary | truncate: 120 }}</p>{% endif %}
-      </a>
-    </li>
-    {% endfor %}
-  </ul>
-</section>
-
-<section class="stream">
-  <div class="stream__head">
-    <h2 class="stream__title">$ ls blog/</h2>
-    <a class="stream__all" href="{{ '/blog/' | relative_url }}">all &rarr;</a>
-  </div>
-  <ul class="postlist">
-    {% for post in site.posts limit: 4 %}
-    <li class="postlist__item">
-      <a href="{{ post.url | relative_url }}">
-        <span class="postlist__date">{{ post.date | date: "%Y-%m-%d" }}</span>
-        <span class="postlist__title">{{ post.title }}</span>
       </a>
     </li>
     {% endfor %}
