@@ -1,7 +1,8 @@
 ---
 title: "Passing the CPTS exam when your skills aren't the problem"
 date: 2026-05-30
-tags: [cpts, htb, mindset, exam-prep]
+tags: [cpts, htb, mindset, exam-prep, panic, anxiety, passed, hacking, htb]
+summary: How I Passed the CPTS Exam Despite Anxiety
 ---
 
 I'm 52 years old, 27 years into a career as a sysadmin, and I've been on
