@@ -29,12 +29,20 @@ description: "Offensive security writeups, Active Directory attack notes and che
     <h2 class="stream__title">$ ls blog/</h2>
     <a class="stream__all" href="{{ '/blog/' | relative_url }}">all &rarr;</a>
   </div>
-  <ul class="postlist">
+  <ul class="cards">
     {% for post in site.posts limit: 4 %}
-    <li class="postlist__item">
-      <a href="{{ post.url | relative_url }}">
-        <span class="postlist__date">{{ post.date | date: "%Y-%m-%d" }}</span>
-        <span class="postlist__title">{{ post.title }}</span>
+    <li class="card">
+      <a class="card__link" href="{{ post.url | relative_url }}">
+        <div class="card__meta">
+          {% if post.category %}{{ post.category }}{% else %}blog{% endif %}
+        </div>
+        <h3 class="card__title">{{ post.title }}</h3>
+        {% if post.summary %}
+          <p class="card__desc">{{ post.summary | truncate: 160 }}</p>
+        {% elsif post.excerpt %}
+          <p class="card__desc">{{ post.excerpt | strip_html | truncate: 160 }}</p>
+        {% endif %}
+        <span class="card__date">{{ post.date | date: "%Y-%m-%d" }}</span>
       </a>
     </li>
     {% endfor %}
