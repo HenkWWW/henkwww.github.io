@@ -66,6 +66,7 @@ defaults:
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-sitemap
 
 exclude:
   - Gemfile
@@ -73,3 +74,7 @@ exclude:
   - README.md
   - vendor
   - .obsidian
+  
+sitemap:
+  exclude:
+    - "/index.md"
