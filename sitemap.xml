@@ -12,5 +12,12 @@ layout: null
     </url>
     {% endif %}
 
+    {% endfor %}
+     {% for post in site.posts %}
+    <url>
+      <loc>https://henkwww.github.io{{ post.url }}/index.html</loc>
+      <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
+      <priority>0.8</priority>
+    </url>
   {% endfor %}
 </urlset>
