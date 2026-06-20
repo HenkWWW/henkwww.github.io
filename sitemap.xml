@@ -7,14 +7,14 @@ layout: null
   {% for page in site.pages %}
     {% if page.layout != null and page.url != "/404.html" and page.url != "/sitemap.xml" %}
     <url>
-      <loc>https://henkwww.github.io{{ page.url }}/index.html</loc>
+      <loc>https://henkwww.github.io{{ page.url }}index.html</loc>
       <priority>0.5</priority>
     </url>
     {% endif %}
 
   {% for post in site.posts %}
     <url>
-      <loc>https://henkwww.github.io{{ post.url }}/index.html</loc>
+      <loc>https://henkwww.github.io{{ post.url }}index.html</loc>
       <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
       <priority>0.8</priority>
     </url>
