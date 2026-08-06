@@ -6,6 +6,10 @@ layout: default
     <a class="doc__back" href="{{ '/writeups/' | relative_url }}">../writeups</a>
     <h1 class="doc__title">{{ page.title }}</h1>
 
+    {% if page.logo %}
+    <img class="doc__logo" src="{{ page.logo | relative_url }}" alt="{{ page.title }} box logo">
+    {% endif %}
+
     <div class="meta">
       {% if page.platform %}<span class="meta__item">{{ page.platform }}</span>{% endif %}
       {% if page.os %}<span class="meta__item">os: {{ page.os }}</span>{% endif %}

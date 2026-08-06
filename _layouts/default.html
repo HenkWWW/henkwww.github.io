@@ -5,8 +5,10 @@
   <a class="skip" href="#main">Skip to content</a>
   {% include nav.html %}
   <main id="main" class="main">
+    <img class="home__cartoon" src="{{ '/assets/img/cartoon-henk.png' | relative_url }}" alt="Cartoon of Henk Wichers" width="360" height="360">
     {{ content }}
   </main>
   {% include footer.html %}
+  <script src="{{ '/assets/js/copy-code.js' | relative_url }}"></script>
 </body>
 </html>

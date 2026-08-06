@@ -1,6 +1,6 @@
 ---
 title: RetroTwo
-date: 2026-02-10
+date: 2026-05-31
 platform: Hack The Box
 os: Windows
 difficulty: Easy
@@ -12,6 +12,7 @@ tags:
   - bloodhound
   - smb
 summary: RetroTwo is a Hack The Box machine running an old Microsoft Windows Server 2008 R2 Datacenter domain controller.
+logo: /assets/img/writeups/retrotwo/box.png
 ---
 ## Overview
 
@@ -39,7 +40,7 @@ nmap -sV -sC -Pn -oN retrotwo 10.129.8.42
 It came up with several common ports for a Windows DC.
 Some interesting stuff:
 
-```bash
+```text
 <SNIP>
 | smb-os-discovery:  
 |   OS: Windows Server 2008 R2 Datacenter 7601 Service Pack 1 (Windows Server 2008 R2 Datacenter 6.1)  
