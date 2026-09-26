@@ -132,14 +132,14 @@ So let's throw john at it.
 
 ```bash
 └──╼ $office2john staff.accdb  
-staff.accdb:$office$*2013*100000*256*16*5736cfcbb054e749a8f303570c5c1970*1ec683<REDACTED>>
+staff.accdb:$office$*2013*100000*256*16*5736cfcbb054e749a8f303570c5c1970*1ec683<REDACTED>
 ```
 
 ```
 john ./hash.txt  -wordlist=/usr/share/wordlists/rockyou.txt
 
 ```
-Now we have the password, and here comes the hardest part for a Windows system administrator and Linux lover who doesn't like it: I had to use Windows to solve the puzzle.
+Now we have the password, and here comes the part I liked least: I had to boot Windows to open it.
 
 So I booted my dual-boot laptop into Windows and opened the file.
 
@@ -147,7 +147,7 @@ So I booted my dual-boot laptop into Windows and opened the file.
 
 When I opened it, I saw an included VBA module.
 
-![Microsoft Access show vba module](/assets/img/writeups/retrotwo/module.png)
+![VBA module inside the Access database](/assets/img/writeups/retrotwo/module.png)
 
 
 The module shows some interesting credentials. Let's see what we can do with them.
@@ -269,7 +269,7 @@ Let's look at the BloodHound data to see if there are any interesting things.
 
 ![Bloodhound Path](/assets/img/writeups/retrotwo/path.png)
 
-Indeed, we see a nice path. We can change the password of the computer account ADMWS01$, which has the rights to add a member to the services group, which in turn has remote desktop usage rights.
+And there's the path. We can change the password of the computer account ADMWS01$, which has the rights to add a member to the services group, which in turn has remote desktop usage rights.
 Let's exploit that path.
 
 1. change the password of ADMWS01$
@@ -290,13 +290,12 @@ export KRB5CCNAME=/home/user/.nxc/modules/pre2k/ccache/fs01.ccache
 Now we add the user ldapreader to the services group.
 
 ```bash
-bloodyAD --host BLN01.retro2.vl -d retro2.vl -u 'ADMWS01$' -p 'Password123!' --dc-ip 10.129.8.42 --dns 10.129.8.42 add groupMember services 'ldapre  
-ader'  
+bloodyAD --host BLN01.retro2.vl -d retro2.vl -u 'ADMWS01$' -p 'Password123!' --dc-ip 10.129.8.42 --dns 10.129.8.42 add groupMember services 'ldapreader'  
 [+] ldapreader added to services
 
 ```
-Then we try to log in with ldapreader.
-It complains about the certificates, so we added /cert:ignore /sec:rdp.
+Then I logged in as ldapreader.
+It complained about the certificate, so I added /cert:ignore /sec:rdp.
 
 ```bash
 xfreerdp3 /v:10.129.8.42 /u:ldapreader /p:<REDACTED>  /d:retro2  /drive:linux,/home/users/tools /w:3440 /h:1400 /cert:ignore /sec:rdp
@@ -350,8 +349,7 @@ And the intended root path was a little more far-fetched than a NetExec scan.
 
 ## Defensive perspective
 
-From a defensive perspective, you should not run an outdated operating system. You should not rely on encrypted files.
-Don't use short, easy-to-crack passwords. And certainly don't hardcode credentials.
+From a defensive perspective: don't run an operating system this old, and don't use short, easy-to-crack passwords. And don't hide credentials behind a password on a file: that's not encryption, it's a lock on an open door.
 
 ## Takeaways
 

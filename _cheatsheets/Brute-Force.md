@@ -11,11 +11,11 @@ summary: >-
 
 > Scope: for **authorised** testing only. Spraying without first
 > knowing the domain lockout threshold will lock out real accounts.
-> The order of sections below is the order you should work in.
+> Work through them in this order.
 
 ## 1. Domain password policy — read this first
 
-The lockout threshold and reset window in the policy is what keeps a
+The lockout threshold and reset window in the policy are what keep a
 spray from becoming a denial-of-service. Always enumerate this before
 any spray.
 
@@ -31,7 +31,7 @@ before you have any credentials.
 ### Generate candidates from a name list
 
 If you have a list of real names (LinkedIn scrape, company website,
-conference attendees), generate usernames in the conventions the target
+conference attendees), generate usernames using the conventions the target
 directory is likely to use:
 
 ```bash
@@ -125,7 +125,7 @@ hashcat --stdout ./wordlist -r ./custom.rule
 **Rules of safety.** One password per round across the whole user
 list. Then wait outside the lockout reset window before the next
 round. **Never** run a wordlist against a single AD user — that's
-bruteforce and locks the account.
+brute force and locks the account.
 
 ### Kerberos-based spray (typically quieter than SMB)
 

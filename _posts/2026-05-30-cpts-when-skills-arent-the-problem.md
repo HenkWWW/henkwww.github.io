@@ -73,12 +73,12 @@ A few things to internalise before you click *start*:
    not where you do good analysis.
 
 Do the things that give you rest. In panic you can't do a good
-analysis. Sleep deprivation does the same. Don't start the box like a
+analysis. Sleep deprivation does the same. Don't start the exam like a
 maniac — read what's actually being asked first.
 
 ## What helped me
 
-**Practice the report before the exam.** Before sitting CPTS, write a
+**Practise the report before the exam.** Before sitting CPTS, write a
 couple of mock reports in SysReptor based on retired HTB boxes. You'll
 get the structure into your muscle memory and discover the time it
 takes when there's no pressure on the clock. Read other CPTS students'
@@ -124,4 +124,5 @@ work. This post is one person's experience, not a treatment plan.
 
 You miss every shot you don't take.
 
-![CPTS certificate](/assets/img/blog/cpts-when-skills-arent-the-problem/certificate.jpg) *Second attempt — 14 of 14.*
+![CPTS certificate](/assets/img/blog/cpts-when-skills-arent-the-problem/certificate.jpg)
+*Second attempt — 14 of 14.*
