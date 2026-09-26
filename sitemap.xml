@@ -4,6 +4,7 @@ layout: null
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
+  {% comment %}Losse pagina's: index, about, blog, writeups, cheatsheets, 404 niet{% endcomment %}
   {% for page in site.pages %}
     {% if page.layout != null and page.url != "/404.html" and page.url != "/sitemap.xml" %}
     <url>
@@ -11,17 +12,34 @@ layout: null
       {% if page.url == "/" %}
         <priority>1.0</priority>
       {% else %}
-        <priority>0.7</priority>  {% endif %}
+        <priority>0.7</priority>
+      {% endif %}
     </url>
     {% endif %}
   {% endfor %}
 
+  {% comment %}Blogposts, met datum{% endcomment %}
   {% for post in site.posts %}
     <url>
       <loc>https://henkwww.github.io{{ post.url }}</loc>
       <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
       <priority>0.8</priority>
     </url>
+  {% endfor %}
+
+  {% comment %}Alle output-collections: writeups, cheatsheets en alles wat er later bijkomt{% endcomment %}
+  {% for coll in site.collections %}
+    {% if coll.output and coll.label != "posts" %}
+      {% for doc in coll.docs %}
+        <url>
+          <loc>https://henkwww.github.io{{ doc.url }}</loc>
+          {% if doc.date %}
+          <lastmod>{{ doc.date | date_to_xmlschema }}</lastmod>
+          {% endif %}
+          <priority>{% if coll.label == "writeups" %}0.8{% else %}0.7{% endif %}</priority>
+        </url>
+      {% endfor %}
+    {% endif %}
   {% endfor %}
 
 </urlset>
