@@ -71,7 +71,6 @@ defaults:
 #  Plugins  —  all three are whitelisted on GitHub Pages
 # ─────────────────────────────────────────────────────────────
 plugins:
-  - jekyll-feed
   - jekyll-seo-tag
 
 exclude:

@@ -8,7 +8,7 @@
       <li><a href="{{ site.linkedin_url }}" rel="me noopener" target="_blank">LinkedIn</a></li>
       <li><a href="{{ site.credly_url }}" rel="me noopener" target="_blank">Credly</a></li>
       <li><a href="{{ site.github_url }}" rel="me noopener" target="_blank">GitHub</a></li>
-      <li><a href="{{ '/feed.xml' | relative_url }}">RSS</a></li>
+      <li><a href="{% if lang == 'nl' %}{{ '/nl/feed.xml' | relative_url }}{% else %}{{ '/feed.xml' | relative_url }}{% endif %}">RSS</a></li>
     </ul>
     <span class="footer__note">{{ t.footer.note }}</span>
   </div>

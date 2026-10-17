@@ -35,5 +35,6 @@
   <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/img/favicon-32x32.png' | relative_url }}">
   <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/img/apple-touch-icon.png' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
-  {% feed_meta %}
+  {%- if lang == "nl" %}{% assign feed_path = "/nl/feed.xml" %}{% else %}{% assign feed_path = "/feed.xml" %}{% endif %}
+  <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ feed_path | absolute_url }}">
 </head>

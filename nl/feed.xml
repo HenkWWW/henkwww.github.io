@@ -1,0 +1,5 @@
+---
+layout: null
+permalink: /nl/feed.xml
+---
+{% include feed-body.html lang="nl" feedurl="/nl/feed.xml" homeurl="/nl/" %}
