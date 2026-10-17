@@ -1,9 +1,11 @@
 ---
 layout: default
 ---
+{%- assign lang = page.lang | default: "en" -%}
+{%- if lang == "nl" -%}{%- assign p = "/nl" -%}{%- else -%}{%- assign p = "" -%}{%- endif -%}
 <article class="doc">
   <header class="doc__head">
-    <a class="doc__back" href="{{ '/blog/' | relative_url }}">../blog</a>
+    <a class="doc__back" href="{{ p | append: '/blog/' | relative_url }}">../blog</a>
     <h1 class="doc__title">{{ page.title }}</h1>
     <div class="meta">
       <span class="meta__item">{{ page.date | date: "%Y-%m-%d" }}</span>

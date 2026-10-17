@@ -1,8 +1,10 @@
 ---
-layout: page
+layout: about
 title: "About"
 heading: "$ cat about.md"
 permalink: /about/
+lang: "en"
+alt_url: "/nl/about/"
 description: "About Henk Wichers: system administrator, HTB CPTS certified, writing about Active Directory attack chains and post-exploitation."
 ---
 
@@ -13,12 +15,11 @@ Netherlands. I live there with Zahaira. I've worked at the same food
 processing company for 30 years, the last 27 as a system
 administrator.
 
-At work I spend my time on Active Directory and NIS2, on AI, and on the
-everyday sysadmin tasks in a plant with a lot of OT automation.
+At work I spend my time on Active Directory, NIS2 and AI, and on the everyday sysadmin work in a plant with a lot of OT automation.
 
-In my free time I like working on Hack The Box and offensive security, and
-I try to keep up with the latest AI developments. I hold the **Hack The Box
-Certified Penetration Testing Specialist (CPTS)** certificate.
+In my free time I like working on Hack The Box and offensive security. I
+started the CPTS track there in 2025 and passed the exam in 2026. Beyond
+that I try to keep up with the latest AI developments.
 
 My focus is on Active Directory attack chains and post-exploitation.
 

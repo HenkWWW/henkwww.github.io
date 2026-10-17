@@ -12,6 +12,8 @@ tags:
   - bloodhound
   - smb
 summary: RetroTwo is a Hack The Box machine running an old Microsoft Windows Server 2008 R2 Datacenter domain controller.
+lang: "en"
+alt_url: "/nl/writeups/retrotwo/"
 logo: /assets/img/writeups/retrotwo/box.png
 ---
 ## Overview

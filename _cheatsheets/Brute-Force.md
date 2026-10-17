@@ -3,6 +3,8 @@ title: "Brute force & username enumeration"
 date: 2026-05-31
 updated: 2026-05
 tags: [active-directory, password-spray, username-enumeration, wordlists, kerberos]
+lang: "en"
+alt_url: "/nl/cheatsheets/brute-force/"
 summary: >-
   Username enumeration, wordlist preparation, and password spraying
   for authorised AD engagements — built around the domain password

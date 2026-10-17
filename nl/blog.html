@@ -1,0 +1,34 @@
+---
+layout: default
+title: "Blog"
+description: "Notities en bespiegelingen over offensive security, certificeringen en de weg van systeembeheer naar pentester."
+permalink: /nl/blog/
+lang: "nl"
+alt_url: "/blog/"
+---
+
+<header class="page__head">
+  <h1 class="page__title">$ ls blog/</h1>
+  <p class="page__lead">
+    Kortere notities — bespiegelingen over certificeringen, methodologie,
+    labvoortgang en de weg van operationeel systeembeheer naar de
+    offensieve kant.
+  </p>
+</header>
+
+<ul class="list">
+  {% assign items = site.posts | where: "lang", "nl" %}
+  {% for post in items %}
+  <li class="list__row">
+    <a class="list__link" href="{{ post.url | relative_url }}">
+      <div class="list__main">
+        <h2 class="list__title">{{ post.title }}</h2>
+        {% if post.excerpt %}<p class="list__desc">{{ post.excerpt | strip_html | truncate: 160 }}</p>{% endif %}
+      </div>
+      <div class="list__side">
+        <span class="list__date">{{ post.date | date: "%Y-%m-%d" }}</span>
+      </div>
+    </a>
+  </li>
+  {% endfor %}
+</ul>

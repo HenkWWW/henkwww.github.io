@@ -122,6 +122,32 @@ a:hover { color: var(--accent-bright); }
   border-color: var(--accent);
 }
 
+/* ── Language switch ────────────────────────────────────── */
+.nav__right {
+  display: flex; align-items: center;
+  gap: 1.4rem;
+}
+.lang {
+  display: flex; align-items: center;
+  gap: .3rem;
+  font-family: var(--mono);
+  font-size: .82rem;
+  padding-left: 1.2rem;
+  border-left: 1px solid var(--border-soft);
+}
+.lang__opt {
+  color: var(--muted-dim);
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.lang__opt:hover {
+  color: var(--text-bright);
+  border-color: var(--accent);
+}
+.lang__opt.is-active { color: var(--accent); }
+.lang__sep { color: var(--border); }
+
 /* ── Nav avatar ─────────────────────────────────────────── */
 .nav__avatar {
   width: 44px; height: 44px;
@@ -474,6 +500,12 @@ a:hover { color: var(--accent-bright); }
   border: 1px solid var(--border);
   border-radius: 3px;
 }
+/* Artikelafbeeldingen met een vaste breedte (bijv. {: width="163"}):
+   als blok, zodat de caption eronder komt in plaats van ernaast. */
+.prose p > img[width] {
+  display: block;
+  margin-bottom: .5rem;
+}
 .prose hr {
   border: 0;
   border-top: 1px solid var(--border-soft);
@@ -646,12 +678,36 @@ a:hover { color: var(--accent-bright); }
   .cards { grid-template-columns: 1fr; }
   .nav__inner { gap: 1rem; }
   .nav__links { gap: 1rem; }
+  .nav__right { gap: .9rem; }
+  .lang { padding-left: .9rem; }
+  .nav__brand .nav__prompt,
+  .nav__brand .nav__sep,
+  .nav__brand .nav__path { display: none; }
   .list__link { flex-direction: column; gap: .8rem; }
   .list__side {
     flex-direction: row; align-items: center;
     flex-wrap: wrap;
   }
   .footer__note { margin-left: 0; width: 100%; }
+}
+
+@media (max-width: 560px) {
+  .nav__inner {
+    height: auto;
+    padding: .55rem 1rem .6rem;
+    flex-wrap: wrap;
+    row-gap: .45rem;
+  }
+  .nav__brand { order: 1; }
+  .nav__right { order: 2; margin-left: auto; gap: .6rem; }
+  .lang { padding-left: .7rem; }
+  .nav__links {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    gap: .6rem;
+    font-size: .8rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

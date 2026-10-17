@@ -1,0 +1,60 @@
+# UI-strings per taal. Wordt geladen met: {% assign t = site.data.i18n[lang] %}
+# Commando-achtige labels ($ ls blog/, henk@www:~$) blijven bewust onvertaald.
+
+en:
+  skip: "Skip to content"
+  nav:
+    writeups: "writeups"
+    cheatsheets: "cheatsheets"
+    blog: "blog"
+    about: "about"
+  switch:
+    label: "Language"
+    other: "Bekijk deze pagina in het Nederlands"
+  home:
+    whoami: "sysadmin by trade, offensive security on the side"
+    title: "Writeups, notes &amp; cheatsheets<br>from the offensive side."
+    lead: >-
+      Active Directory attack chains, post-exploitation and the detection
+      side of both, written from the sysadmin side.
+    btn_writeups: "Read the writeups"
+    btn_blog: "Blog"
+    btn_sheets: "Cheatsheets"
+    btn_htb: "HTB profile"
+    btn_cpts: "CPTS Certificate"
+  all: "all &rarr;"
+  meta:
+    os: "os"
+    updated: "updated"
+    cheatsheet: "cheatsheet"
+  footer:
+    note: "Built with Jekyll on GitHub Pages."
+
+nl:
+  skip: "Naar de inhoud"
+  nav:
+    writeups: "writeups"
+    cheatsheets: "cheatsheets"
+    blog: "blog"
+    about: "over"
+  switch:
+    label: "Taal"
+    other: "View this page in English"
+  home:
+    whoami: "sysadmin van beroep, offensive security ernaast"
+    title: "Writeups, notities &amp; cheatsheets<br>vanaf de offensieve kant."
+    lead: >-
+      Active Directory-aanvalsketens, post-exploitation en de detectiekant
+      van beide, opgeschreven vanuit het systeembeheer.
+    btn_writeups: "Lees de writeups"
+    btn_blog: "Blog"
+    btn_sheets: "Cheatsheets"
+    btn_htb: "HTB-profiel"
+    btn_cpts: "CPTS-certificaat"
+  all: "alles &rarr;"
+  meta:
+    os: "besturing"
+    updated: "bijgewerkt"
+    cheatsheet: "cheatsheet"
+  footer:
+    note: "Gemaakt met Jekyll op GitHub Pages."

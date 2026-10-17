@@ -1,14 +1,17 @@
 ---
 layout: default
 ---
+{%- assign lang = page.lang | default: "en" -%}
+{%- assign t = site.data.i18n[lang] -%}
+{%- if lang == "nl" -%}{%- assign p = "/nl" -%}{%- else -%}{%- assign p = "" -%}{%- endif -%}
 <article class="doc">
   <header class="doc__head">
-    <a class="doc__back" href="{{ '/cheatsheets/' | relative_url }}">../cheatsheets</a>
+    <a class="doc__back" href="{{ p | append: '/cheatsheets/' | relative_url }}">../cheatsheets</a>
     <h1 class="doc__title">{{ page.title }}</h1>
 
     <div class="meta">
-      <span class="meta__item">cheatsheet</span>
-      {% if page.updated %}<span class="meta__item">updated: {{ page.updated }}</span>
+      <span class="meta__item">{{ t.meta.cheatsheet }}</span>
+      {% if page.updated %}<span class="meta__item">{{ t.meta.updated }}: {{ page.updated }}</span>
       {% elsif page.date %}<span class="meta__item">{{ page.date | date: "%Y-%m-%d" }}</span>{% endif %}
     </div>
 

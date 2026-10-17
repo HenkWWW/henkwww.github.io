@@ -3,6 +3,8 @@ layout: default
 title: "Cheatsheets"
 description: "Offensive security cheatsheets — quick reference for enumeration, Active Directory and post-exploitation."
 permalink: /cheatsheets/
+lang: "en"
+alt_url: "/nl/cheatsheets/"
 ---
 
 <header class="page__head">
@@ -14,7 +16,7 @@ permalink: /cheatsheets/
 </header>
 
 <ul class="list">
-  {% assign items = site.cheatsheets | sort: "title" %}
+  {% assign items = site.cheatsheets | where: "lang", "en" | sort: "title" %}
   {% for c in items %}
   <li class="list__row">
     <a class="list__link" href="{{ c.url | relative_url }}">

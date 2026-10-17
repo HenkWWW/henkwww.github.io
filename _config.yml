@@ -55,14 +55,17 @@ collections:
 # only need a title + date in their front matter.
 defaults:
   - scope: { path: "", type: "writeups" }
-    values: { layout: "writeup" }
+    values: { layout: "writeup", lang: "en" }
   - scope: { path: "", type: "cheatsheets" }
-    values: { layout: "cheatsheet" }
+    values: { layout: "cheatsheet", lang: "en" }
   - scope: { path: "", type: "posts" }
-    values: { layout: "post" }
+    values: { layout: "post", lang: "en" }
   - scope: { path: "" }
     values:
       image: /assets/img/og-card.png
+      # Taal van de pagina; NL-bestanden overschrijven dit met lang: "nl".
+      # De taalknop en de hreflang-tags in de head lezen deze waarde.
+      lang: "en"
 
 # ─────────────────────────────────────────────────────────────
 #  Plugins  —  all three are whitelisted on GitHub Pages

@@ -1,8 +1,10 @@
+{%- assign lang = page.lang | default: "en" -%}
+{%- assign t = site.data.i18n[lang] -%}
 <!doctype html>
-<html lang="en">
+<html lang="{{ lang }}">
 {% include head.html %}
 <body>
-  <a class="skip" href="#main">Skip to content</a>
+  <a class="skip" href="#main">{{ t.skip }}</a>
   {% include nav.html %}
   <main id="main" class="main">
     <img class="home__cartoon" src="{{ '/assets/img/cartoon-henk.png' | relative_url }}" alt="Cartoon of Henk Wichers" width="360" height="360">

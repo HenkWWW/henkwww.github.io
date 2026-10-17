@@ -3,6 +3,8 @@ layout: default
 title: "Blog"
 description: "Notes and reflections on offensive security, certifications and the path from sysadmin to pentester."
 permalink: /blog/
+lang: "en"
+alt_url: "/nl/blog/"
 ---
 
 <header class="page__head">
@@ -15,7 +17,8 @@ permalink: /blog/
 </header>
 
 <ul class="list">
-  {% for post in site.posts %}
+  {% assign items = site.posts | where: "lang", "en" %}
+  {% for post in items %}
   <li class="list__row">
     <a class="list__link" href="{{ post.url | relative_url }}">
       <div class="list__main">

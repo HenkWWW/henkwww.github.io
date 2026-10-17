@@ -21,6 +21,8 @@ tags:
   - htb
   - netexec
 summary: A Windows domain controller where leaked logs reveal service-account credentials, a shadow-credentials attack leads to a foothold, and an ESC17/WSUS abuse plus DLL sideloading gets us to Domain Admin.
+lang: "en"
+alt_url: "/nl/writeups/logging/"
 logo: /assets/img/writeups/logging/logging.png
 ---
 

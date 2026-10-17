@@ -1,0 +1,43 @@
+---
+layout: default
+title: "Writeups"
+description: "Penetratietest-writeups — retired Hack The Box-machines, Active Directory-aanvalsketens en post-exploitation."
+permalink: /nl/writeups/
+lang: "nl"
+alt_url: "/writeups/"
+---
+
+<header class="page__head">
+  <h1 class="page__title">$ ls writeups/</h1>
+  <p class="page__lead">
+    Writeups van retired boxes. Elke writeup loopt de methodologie en de
+    beslismomenten door — niet alleen de commando's die toevallig werkten —
+    en sluit af met hoe hetzelfde pad gedetecteerd of voorkomen zou worden.
+  </p>
+</header>
+
+<ul class="list">
+  {% assign items = site.writeups | where: "lang", "nl" | sort: "date" | reverse %}
+  {% for w in items %}
+  <li class="list__row">
+    <a class="list__link" href="{{ w.url | relative_url }}">
+      <div class="list__main">
+        <h2 class="list__title">{{ w.title }}</h2>
+        {% if w.summary %}<p class="list__desc">{{ w.summary }}</p>{% endif %}
+        {% if w.tags and w.tags.size > 0 %}
+        <ul class="tags">
+          {% for tag in w.tags %}<li class="tag">{{ tag }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      <div class="list__side">
+        {% if w.difficulty %}
+        <span class="badge badge--{{ w.difficulty | downcase }}">{{ w.difficulty }}</span>
+        {% endif %}
+        {% if w.os %}<span class="list__os">{{ w.os }}</span>{% endif %}
+        <span class="list__date">{{ w.date | date: "%Y-%m-%d" }}</span>
+      </div>
+    </a>
+  </li>
+  {% endfor %}
+</ul>

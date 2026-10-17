@@ -1,14 +1,32 @@
+{%- assign lang = page.lang | default: "en" -%}
+{%- assign t = site.data.i18n[lang] -%}
+{%- if lang == "nl" -%}{%- assign p = "/nl" -%}{%- else -%}{%- assign p = "" -%}{%- endif -%}
+{%- assign alt = page.alt_url | default: "/nl/" -%}
+{%- if lang == "en" -%}
+  {%- assign en_url = page.url -%}
+  {%- assign nl_url = alt -%}
+{%- else -%}
+  {%- assign nl_url = page.url -%}
+  {%- assign en_url = alt -%}
+{%- endif -%}
 <nav class="nav">
   <div class="nav__inner">
-    <a class="nav__brand" href="{{ '/' | relative_url }}">
+    <a class="nav__brand" href="{{ p | append: '/' | relative_url }}">
       <img class="nav__avatar" src="{{ '/assets/img/avatar.png' | relative_url }}" alt="Henk Wichers" width="36" height="36">
       <span class="nav__prompt">henk@www</span><span class="nav__sep">:</span><span class="nav__path">~</span><span class="nav__dollar">$</span>
     </a>
     <ul class="nav__links">
-      <li><a href="{{ '/writeups/' | relative_url }}">writeups</a></li>
-      <li><a href="{{ '/cheatsheets/' | relative_url }}">cheatsheets</a></li>
-      <li><a href="{{ '/blog/' | relative_url }}">blog</a></li>
-      <li><a href="{{ '/about/' | relative_url }}">about</a></li>
+      <li><a href="{{ p | append: '/writeups/' | relative_url }}">{{ t.nav.writeups }}</a></li>
+      <li><a href="{{ p | append: '/cheatsheets/' | relative_url }}">{{ t.nav.cheatsheets }}</a></li>
+      <li><a href="{{ p | append: '/blog/' | relative_url }}">{{ t.nav.blog }}</a></li>
+      <li><a href="{{ p | append: '/about/' | relative_url }}">{{ t.nav.about }}</a></li>
     </ul>
+    <div class="nav__right">
+    <div class="lang" role="group" aria-label="{{ t.switch.label }}">
+      <a class="lang__opt{% if lang == 'en' %} is-active{% endif %}" href="{{ en_url | relative_url }}" hreflang="en" lang="en" onclick="try{localStorage.setItem('henkwww-lang','en')}catch(e){}"{% if lang == 'en' %} aria-current="true"{% else %} title="{{ t.switch.other }}"{% endif %}>EN</a>
+      <span class="lang__sep" aria-hidden="true">/</span>
+      <a class="lang__opt{% if lang == 'nl' %} is-active{% endif %}" href="{{ nl_url | relative_url }}" hreflang="nl" lang="nl" onclick="try{localStorage.setItem('henkwww-lang','nl')}catch(e){}"{% if lang == 'nl' %} aria-current="true"{% else %} title="{{ t.switch.other }}"{% endif %}>NL</a>
+    </div>
+    </div>
   </div>
 </nav>

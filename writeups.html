@@ -3,6 +3,8 @@ layout: default
 title: "Writeups"
 description: "Penetration testing writeups — retired Hack The Box machines, Active Directory attack chains and post-exploitation."
 permalink: /writeups/
+lang: "en"
+alt_url: "/nl/writeups/"
 ---
 
 <header class="page__head">
@@ -15,7 +17,7 @@ permalink: /writeups/
 </header>
 
 <ul class="list">
-  {% assign items = site.writeups | sort: "date" | reverse %}
+  {% assign items = site.writeups | where: "lang", "en" | sort: "date" | reverse %}
   {% for w in items %}
   <li class="list__row">
     <a class="list__link" href="{{ w.url | relative_url }}">

